@@ -5,6 +5,8 @@ import mekanism.common.config.MekanismConfig;
 import mekanism.common.tile.interfaces.IUpgradeTile;
 import net.yxiao233.mekanismupgradesreborn.Config;
 
+import static net.yxiao233.mekanismupgradesreborn.Config.useMekDefaultUpgradeFormula;
+
 public class Utils {
 
     public static double time(IUpgradeTile tile) {
@@ -15,7 +17,10 @@ public class Utils {
     public static double electricity(IUpgradeTile tile) {
         var speed = tile.getComponent().getUpgrades(Upgrade.SPEED);
         var energy = tile.getComponent().getUpgrades(Upgrade.ENERGY);
-        return Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get() * Config.electricityMultiplier, (2 * speed - energy) / 8D);
+        if (useMekDefaultUpgradeFormula){
+            return Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get() * Config.electricityMultiplier, (2 * speed - energy) / 8D);
+        }
+        return Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get() * Config.electricityMultiplier, (2 * speed - Math.min(energy, Math.max(8, speed))) / 8D);
     }
 
     public static double capacity(IUpgradeTile tile) {
